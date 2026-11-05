@@ -17,7 +17,7 @@ Return: a title, 3-6 page sections, 2-5 concrete features, and a one-line visual
 
 export async function planner(idea: string): Promise<Plan> {
   const structured = llm.withStructuredOutput(PlanSchema);
-  const PLANNER = structured.invoke([
+  const PLANNER = await structured.invoke([
     { role: "system", content: SYSTEM_PROMPT },
     { role: "user", content: idea },
   ]);
