@@ -1,774 +1,1168 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="scroll-smooth dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TaskFlow - Minimalist Single-Page Todo App</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            slate: {
-              850: '#131e32',
-              950: '#090d16',
-            },
-            teal: {
-              400: '#2dd4bf',
-              500: '#14b8a6',
-              600: '#0d9488',
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peak Performance Gym - Transform Your Fitness Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#FF5500',
+                            orangeHover: '#E64D00',
+                            dark: '#0B0C0E',
+                            card: '#14161B',
+                            cardBorder: '#232730',
+                            charcoal: '#1C1F26',
+                            muted: '#9CA3AF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Impact', 'Teko', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow': '0 0 25px rgba(255, 85, 0, 0.35)',
+                        'glow-sm': '0 0 12px rgba(255, 85, 0, 0.25)',
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-  <style>
-    /* Custom scrollbar styling */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #090d16;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #334155;
-    }
-    /* Smooth progress bar transition */
-    .progress-bar-fill {
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  </style>
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0C0E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232730;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF5500;
+        }
+        
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(255, 85, 0, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-teal-500 selection:text-slate-950 flex flex-col justify-between">
+<body class="bg-brand-dark text-gray-100 font-sans antialiased selection:bg-brand-orange selection:text-white">
 
-  <!-- Background Ambient Glow -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
-    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
-  </div>
+    <!-- Header / Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-brand-dark/90 backdrop-blur-md border-b border-brand-cardBorder transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded bg-brand-orange flex items-center justify-center font-black text-xl text-black transform group-hover:rotate-6 transition-transform">
+                        <svg class="w-6 h-6 text-black fill-current" viewBox="0 0 24 24">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-wider text-white uppercase font-display">
+                        PEAK<span class="text-brand-orange">PERFORMANCE</span>
+                    </span>
+                </a>
 
-  <div class="relative z-10 max-w-4xl mx-auto px-4 py-8 w-full flex-1 flex flex-col gap-6">
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-8 font-semibold text-sm uppercase tracking-wider">
+                    <a href="#facilities" class="hover:text-brand-orange transition-colors">Facilities</a>
+                    <a href="#schedule" class="hover:text-brand-orange transition-colors">Schedule</a>
+                    <a href="#pricing" class="hover:text-brand-orange transition-colors">Membership</a>
+                    <a href="#trainers" class="hover:text-brand-orange transition-colors">Trainers</a>
+                    <a href="#location" class="hover:text-brand-orange transition-colors">Locations</a>
+                </nav>
 
-    <!-- HERO HEADER -->
-    <header class="text-center space-y-3 pt-4">
-      <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-teal-400 text-xs font-semibold tracking-wide uppercase shadow-inner">
-        <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
-        Distraction-Free Productivity
-      </div>
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white flex items-center justify-center gap-3">
-        Task<span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">Flow</span>
-      </h1>
-      <p class="text-slate-400 text-sm md:text-base max-w-md mx-auto">
-        Streamline your daily workflow. Capture tasks instantly, prioritize effectively, and focus on what matters.
-      </p>
+                <!-- Desktop CTA Button -->
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="#register" class="bg-brand-orange hover:bg-brand-orangeHover text-black font-extrabold px-6 py-2.5 rounded text-sm uppercase tracking-wider transition-all shadow-glow hover:shadow-none transform hover:-translate-y-0.5">
+                        Free 7-Day Pass
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle Menu">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menu-icon-open" class="block" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-card border-b border-brand-cardBorder px-4 pt-2 pb-6 space-y-4">
+            <a href="#facilities" class="mobile-nav-link block py-2 text-base font-semibold uppercase tracking-wider text-gray-200 hover:text-brand-orange">Facilities</a>
+            <a href="#schedule" class="mobile-nav-link block py-2 text-base font-semibold uppercase tracking-wider text-gray-200 hover:text-brand-orange">Schedule</a>
+            <a href="#pricing" class="mobile-nav-link block py-2 text-base font-semibold uppercase tracking-wider text-gray-200 hover:text-brand-orange">Membership</a>
+            <a href="#trainers" class="mobile-nav-link block py-2 text-base font-semibold uppercase tracking-wider text-gray-200 hover:text-brand-orange">Trainers</a>
+            <a href="#location" class="mobile-nav-link block py-2 text-base font-semibold uppercase tracking-wider text-gray-200 hover:text-brand-orange">Locations</a>
+            <a href="#register" class="mobile-nav-link block w-full text-center bg-brand-orange text-black font-extrabold py-3 rounded uppercase tracking-wider shadow-glow">
+                Free 7-Day Pass
+            </a>
+        </div>
     </header>
 
-    <!-- PRODUCTIVITY PROGRESS SUMMARY -->
-    <section class="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-5 shadow-xl shadow-black/40">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
-        <div>
-          <h2 class="text-base font-semibold text-white flex items-center gap-2">
-            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-            </svg>
-            Productivity Stats
-          </h2>
-          <p id="progressMessage" class="text-xs text-slate-400 mt-0.5">Keep up the momentum!</p>
-        </div>
-        <div class="flex items-center gap-3 text-xs">
-          <div class="bg-slate-950/60 border border-slate-800/80 px-3 py-1.5 rounded-lg text-center min-w-[70px]">
-            <span class="block text-slate-400 text-[10px] uppercase font-bold">Total</span>
-            <span id="statTotal" class="text-sm font-bold text-slate-200">0</span>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800/80 px-3 py-1.5 rounded-lg text-center min-w-[70px]">
-            <span class="block text-slate-400 text-[10px] uppercase font-bold">Active</span>
-            <span id="statActive" class="text-sm font-bold text-amber-400">0</span>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800/80 px-3 py-1.5 rounded-lg text-center min-w-[70px]">
-            <span class="block text-slate-400 text-[10px] uppercase font-bold">Done</span>
-            <span id="statDone" class="text-sm font-bold text-teal-400">0</span>
-          </div>
-        </div>
-      </div>
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-brand-cardBorder py-20">
+            <!-- Background Image Overlay -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1920" 
+                     alt="Gym Background" 
+                     class="w-full h-full object-cover object-center filter brightness-40 contrast-125">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/70 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-transparent to-brand-dark/80"></div>
+                <div class="absolute inset-0 bg-grid-pattern opacity-30"></div>
+            </div>
 
-      <!-- Visual Progress Bar -->
-      <div class="space-y-1.5">
-        <div class="flex justify-between text-xs font-semibold">
-          <span class="text-slate-400">Completion Rate</span>
-          <span id="progressPercent" class="text-teal-400 font-bold">0%</span>
-        </div>
-        <div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
-          <div id="progressBar" class="progress-bar-fill h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full w-0 shadow-lg shadow-teal-500/50"></div>
-        </div>
-      </div>
-    </section>
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-orange/10 border border-brand-orange/30 text-brand-orange text-xs font-bold uppercase tracking-widest">
+                            <span class="w-2 h-2 rounded-full bg-brand-orange animate-ping"></span>
+                            Next-Gen Fitness Facility
+                        </div>
+                        
+                        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-white leading-tight">
+                            FORGE YOUR <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-400 to-yellow-500">ULTIMATE SELF</span>
+                        </h1>
+                        
+                        <p class="text-lg sm:text-xl text-brand-muted max-w-2xl leading-relaxed">
+                            Break your limits with world-class equipment, high-octane group training, and elite personal coaching. Your transformation starts here.
+                        </p>
 
-    <!-- QUICK-ADD BAR -->
-    <section class="bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-3 md:p-4 shadow-xl shadow-black/40">
-      <form id="addTaskForm" class="flex flex-col md:flex-row gap-2.5">
-        <div class="relative flex-1">
-          <input
-            type="text"
-            id="taskInput"
-            placeholder="Add a new task..."
-            required
-            class="w-full bg-slate-950/80 text-slate-100 placeholder-slate-500 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition"
-          />
-        </div>
-        <div class="flex items-center gap-2">
-          <!-- Priority Selector -->
-          <select
-            id="prioritySelect"
-            class="bg-slate-950/80 text-slate-300 border border-slate-800 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-teal-400 cursor-pointer transition flex-1 md:flex-none"
-          >
-            <option value="low">🟢 Low</option>
-            <option value="medium" selected>🟡 Medium</option>
-            <option value="high">🔴 High</option>
-          </select>
+                        <div class="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                            <a href="#register" class="w-full sm:w-auto px-8 py-4 bg-brand-orange hover:bg-brand-orangeHover text-black font-black text-lg uppercase tracking-wider rounded shadow-glow hover:shadow-none transition-all text-center">
+                                Claim 7-Day Free Pass
+                            </a>
+                            <a href="#facilities" class="w-full sm:w-auto px-8 py-4 border border-brand-cardBorder hover:border-brand-orange text-white font-bold text-lg uppercase tracking-wider rounded transition-colors text-center bg-brand-card/50 backdrop-blur">
+                                Explore Zones
+                            </a>
+                        </div>
 
-          <!-- Category Selector -->
-          <select
-            id="categorySelect"
-            class="bg-slate-950/80 text-slate-300 border border-slate-800 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-teal-400 cursor-pointer transition flex-1 md:flex-none"
-          >
-            <option value="Work">💼 Work</option>
-            <option value="Personal" selected>👤 Personal</option>
-            <option value="Learning">📚 Learning</option>
-            <option value="Health">🧘 Health</option>
-            <option value="Finance">💳 Finance</option>
-          </select>
+                        <!-- Highlights Bar -->
+                        <div class="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-brand-cardBorder/60">
+                            <div>
+                                <p class="text-3xl font-black text-white">24/7</p>
+                                <p class="text-xs text-brand-muted uppercase tracking-wider font-medium">Facility Access</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-black text-brand-orange">50+</p>
+                                <p class="text-xs text-brand-muted uppercase tracking-wider font-medium">Weekly Classes</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-black text-white">15+</p>
+                                <p class="text-xs text-brand-muted uppercase tracking-wider font-medium">Master Coaches</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-black text-brand-orange">4.9★</p>
+                                <p class="text-xs text-brand-muted uppercase tracking-wider font-medium">Member Rating</p>
+                            </div>
+                        </div>
+                    </div>
 
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-5 py-3 rounded-xl text-sm transition-all duration-200 flex items-center justify-center gap-1.5 shadow-lg shadow-teal-500/20 active:scale-95 whitespace-nowrap"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7-7H5"/>
-            </svg>
-            <span class="hidden sm:inline">Add Task</span>
-          </button>
-        </div>
-      </form>
-    </section>
+                    <!-- Hero Quick Sign Up Card -->
+                    <div class="lg:col-span-5 hidden lg:block">
+                        <div class="bg-brand-card border border-brand-cardBorder p-8 rounded-xl shadow-2xl relative">
+                            <div class="absolute -top-3 -right-3 bg-brand-orange text-black font-black text-xs uppercase px-3 py-1 rounded shadow">
+                                Limited Spots
+                            </div>
+                            <h3 class="text-2xl font-black uppercase text-white mb-2">Get Instant Access</h3>
+                            <p class="text-sm text-brand-muted mb-6">Experience Peak Performance with a free 7-day all-access trial pass.</p>
 
-    <!-- CATEGORY AND PRIORITY FILTER TOOLBAR -->
-    <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3.5 space-y-3">
-      <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        <!-- Search Box -->
-        <div class="relative flex-1">
-          <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Search tasks..."
-            class="w-full bg-slate-950/80 text-slate-200 placeholder-slate-500 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-teal-400 transition"
-          />
-        </div>
+                            <form id="hero-quick-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Full Name</label>
+                                    <input type="text" required placeholder="John Doe" class="w-full bg-brand-charcoal border border-brand-cardBorder rounded px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Email Address</label>
+                                    <input type="email" required placeholder="john@example.com" class="w-full bg-brand-charcoal border border-brand-cardBorder rounded px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Preferred Location</label>
+                                    <select class="w-full bg-brand-charcoal border border-brand-cardBorder rounded px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                        <option value="downtown">Downtown Flagship</option>
+                                        <option value="uptown">Uptown Power House</option>
+                                        <option value="westside">Westside Fitness Hub</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-black font-extrabold py-3.5 rounded uppercase tracking-wider shadow-glow transition-all">
+                                    Unlock 7-Day Pass Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <!-- Status Filter Tabs -->
-        <div class="flex bg-slate-950 rounded-xl p-1 border border-slate-800 self-center w-full md:w-auto justify-center">
-          <button data-status="all" class="filter-status-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 transition active-tab">All</button>
-          <button data-status="active" class="filter-status-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 transition">Active</button>
-          <button data-status="completed" class="filter-status-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 transition">Completed</button>
-        </div>
-      </div>
+        <!-- Facilities & Workout Zone Highlights -->
+        <section id="facilities" class="py-24 bg-brand-dark relative border-b border-brand-cardBorder">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-brand-orange font-bold text-sm uppercase tracking-widest">Built for Maximum Results</h2>
+                    <p class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">WORLD-CLASS TRAINING ZONES</p>
+                    <p class="text-brand-muted">Engineered for athletes and fitness enthusiasts of all levels. Step into purpose-built environments designed to maximize performance.</p>
+                </div>
 
-      <!-- Secondary Filters (Priority & Category Dropdowns) -->
-      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-800/60 text-xs">
-        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          <span class="text-slate-500 font-medium">Filter by:</span>
-          <!-- Priority Filter -->
-          <select id="filterPriority" class="bg-slate-950 text-slate-300 border border-slate-800 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-teal-400 cursor-pointer">
-            <option value="all">All Priorities</option>
-            <option value="high">🔴 High Priority</option>
-            <option value="medium">🟡 Medium Priority</option>
-            <option value="low">🟢 Low Priority</option>
-          </select>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Zone 1 -->
+                    <div class="group bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="h-56 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Heavy Iron Zone" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 bg-brand-orange text-black font-extrabold text-xs px-3 py-1 rounded uppercase">Zone 01</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold uppercase text-white mb-2 group-hover:text-brand-orange transition-colors">Heavy Iron & Power Arena</h3>
+                            <p class="text-brand-muted text-sm leading-relaxed mb-4">Eleiko competition bars, custom dumbbell racks up to 150lbs, power cages, and deadlift platforms with calibrated plates.</p>
+                            <ul class="text-xs text-gray-300 space-y-2">
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> 10 Competition Power Racks</li>
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Dumbbells up to 150 lbs</li>
+                            </ul>
+                        </div>
+                    </div>
 
-          <!-- Category Filter -->
-          <select id="filterCategory" class="bg-slate-950 text-slate-300 border border-slate-800 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-teal-400 cursor-pointer">
-            <option value="all">All Categories</option>
-            <option value="Work">💼 Work</option>
-            <option value="Personal">👤 Personal</option>
-            <option value="Learning">📚 Learning</option>
-            <option value="Health">🧘 Health</option>
-            <option value="Finance">💳 Finance</option>
-          </select>
-        </div>
+                    <!-- Zone 2 -->
+                    <div class="group bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="h-56 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800" 
+                                 alt="HIIT Turf Track" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 bg-brand-orange text-black font-extrabold text-xs px-3 py-1 rounded uppercase">Zone 02</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold uppercase text-white mb-2 group-hover:text-brand-orange transition-colors">Functional HIIT & Sprint Turf</h3>
+                            <p class="text-brand-muted text-sm leading-relaxed mb-4">50-meter indoor sled track, battle ropes, plyo boxes, Rogue Echo bikes, and custom rig frame for explosive conditioning.</p>
+                            <ul class="text-xs text-gray-300 space-y-2">
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> 50m Indoor Sprint Track</li>
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Prowler Sleds & Battle Ropes</li>
+                            </ul>
+                        </div>
+                    </div>
 
-        <div class="flex items-center gap-2 ml-auto">
-          <span class="text-slate-500 font-medium">Sort:</span>
-          <select id="sortBy" class="bg-slate-950 text-slate-300 border border-slate-800 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-teal-400 cursor-pointer">
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="priority">Priority (High to Low)</option>
-          </select>
-        </div>
-      </div>
-    </section>
+                    <!-- Zone 3 -->
+                    <div class="group bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="h-56 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Cardio Suite" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 bg-brand-orange text-black font-extrabold text-xs px-3 py-1 rounded uppercase">Zone 03</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold uppercase text-white mb-2 group-hover:text-brand-orange transition-colors">Smart Cardio Theater</h3>
+                            <p class="text-brand-muted text-sm leading-relaxed mb-4">State-of-the-art treadmills, Woodway curves, stairmasters, and rowers with real-time biometric screen integration.</p>
+                            <ul class="text-xs text-gray-300 space-y-2">
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Heart Rate Tracking Screens</li>
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Woodway Curve Treadmills</li>
+                            </ul>
+                        </div>
+                    </div>
 
-    <!-- INTERACTIVE TASK BOARD -->
-    <main class="flex-1 space-y-3">
-      <div id="taskList" class="space-y-2.5">
-        <!-- Dynamic Task Cards will be inserted here -->
-      </div>
+                    <!-- Zone 4 -->
+                    <div class="group bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="h-56 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Yoga Studio" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 bg-brand-orange text-black font-extrabold text-xs px-3 py-1 rounded uppercase">Zone 04</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold uppercase text-white mb-2 group-hover:text-brand-orange transition-colors">Mind & Mobility Studio</h3>
+                            <p class="text-brand-muted text-sm leading-relaxed mb-4">A serene temperature-controlled space equipped for Hot Yoga, Pilates, mobility work, and guided meditation sessions.</p>
+                            <ul class="text-xs text-gray-300 space-y-2">
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Infrared Heating System</li>
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Premium Mats & Blocks</li>
+                            </ul>
+                        </div>
+                    </div>
 
-      <!-- Empty State -->
-      <div id="emptyState" class="hidden text-center py-12 bg-slate-900/40 border border-dashed border-slate-800 rounded-2xl p-6">
-        <div class="inline-flex p-3 rounded-full bg-slate-800/50 text-slate-500 mb-3">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-          </svg>
-        </div>
-        <h3 class="text-slate-300 font-semibold text-sm">No tasks found</h3>
-        <p class="text-slate-500 text-xs mt-1">Try tweaking your search or filters, or create a new task above.</p>
-      </div>
+                    <!-- Zone 5 -->
+                    <div class="group bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="h-56 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1509721434272-b79147e0e708?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Boxing Ring" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 bg-brand-orange text-black font-extrabold text-xs px-3 py-1 rounded uppercase">Zone 05</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold uppercase text-white mb-2 group-hover:text-brand-orange transition-colors">Combat & Boxing Ring</h3>
+                            <p class="text-brand-muted text-sm leading-relaxed mb-4">Regulation elevated ring, heavy bags, speed bags, and specialized gear for technical combat training and conditioning.</p>
+                            <ul class="text-xs text-gray-300 space-y-2">
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Full Size Regulation Ring</li>
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> 12 Heavy Bags & Speed Station</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Zone 6 -->
+                    <div class="group bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden hover:border-brand-orange transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="h-56 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Recovery Spa" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 bg-brand-orange text-black font-extrabold text-xs px-3 py-1 rounded uppercase">Zone 06</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold uppercase text-white mb-2 group-hover:text-brand-orange transition-colors">Cryo & Recovery Lounge</h3>
+                            <p class="text-brand-muted text-sm leading-relaxed mb-4">Optimize your recovery with contrast plunge pools, infrared saunas, Hyperice compression boots, and massage therapy.</p>
+                            <ul class="text-xs text-gray-300 space-y-2">
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Cold Plunge & Finnish Sauna</li>
+                                <li class="flex items-center gap-2"><span class="text-brand-orange">✓</span> Normatec Compression Systems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filterable Weekly Class Schedule -->
+        <section id="schedule" class="py-24 bg-brand-charcoal/40 border-b border-brand-cardBorder relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+                    <h2 class="text-brand-orange font-bold text-sm uppercase tracking-widest">Train Together, Win Together</h2>
+                    <p class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">WEEKLY CLASS SCHEDULE</p>
+                    <p class="text-brand-muted">Filter by day or workout category to find the perfect session for your goals.</p>
+                </div>
+
+                <!-- Day Filter Buttons -->
+                <div class="flex items-center justify-start md:justify-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none" id="day-filters">
+                    <button class="day-btn active bg-brand-orange text-black font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Mon">Mon</button>
+                    <button class="day-btn bg-brand-card hover:bg-brand-cardBorder text-gray-300 font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Tue">Tue</button>
+                    <button class="day-btn bg-brand-card hover:bg-brand-cardBorder text-gray-300 font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Wed">Wed</button>
+                    <button class="day-btn bg-brand-card hover:bg-brand-cardBorder text-gray-300 font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Thu">Thu</button>
+                    <button class="day-btn bg-brand-card hover:bg-brand-cardBorder text-gray-300 font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Fri">Fri</button>
+                    <button class="day-btn bg-brand-card hover:bg-brand-cardBorder text-gray-300 font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Sat">Sat</button>
+                    <button class="day-btn bg-brand-card hover:bg-brand-cardBorder text-gray-300 font-extrabold px-5 py-2.5 rounded text-sm uppercase tracking-wider transition-all whitespace-nowrap" data-day="Sun">Sun</button>
+                </div>
+
+                <!-- Category Filter Buttons -->
+                <div class="flex items-center justify-center gap-3 flex-wrap mb-10 text-xs font-bold uppercase tracking-wider" id="category-filters">
+                    <button class="cat-btn bg-brand-orange/20 border border-brand-orange text-brand-orange px-4 py-1.5 rounded-full" data-cat="all">All Categories</button>
+                    <button class="cat-btn bg-brand-card border border-brand-cardBorder hover:border-gray-500 text-gray-400 px-4 py-1.5 rounded-full" data-cat="Strength">Strength</button>
+                    <button class="cat-btn bg-brand-card border border-brand-cardBorder hover:border-gray-500 text-gray-400 px-4 py-1.5 rounded-full" data-cat="HIIT">HIIT & Cardio</button>
+                    <button class="cat-btn bg-brand-card border border-brand-cardBorder hover:border-gray-500 text-gray-400 px-4 py-1.5 rounded-full" data-cat="Boxing">Boxing</button>
+                    <button class="cat-btn bg-brand-card border border-brand-cardBorder hover:border-gray-500 text-gray-400 px-4 py-1.5 rounded-full" data-cat="Yoga">Yoga & Mobility</button>
+                </div>
+
+                <!-- Schedule List -->
+                <div class="bg-brand-card border border-brand-cardBorder rounded-xl p-4 sm:p-6 shadow-xl">
+                    <div class="divide-y divide-brand-cardBorder" id="schedule-container">
+                        <!-- Dynamic schedule items will be rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Membership Pricing Plans -->
+        <section id="pricing" class="py-24 bg-brand-dark border-b border-brand-cardBorder relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+                    <h2 class="text-brand-orange font-bold text-sm uppercase tracking-widest">Transparent Membership</h2>
+                    <p class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">CHOOSE YOUR LEVEL</p>
+                    <p class="text-brand-muted">No hidden lock-ins. Upgrade, downgrade, or cancel anytime.</p>
+                </div>
+
+                <!-- Toggle Switch -->
+                <div class="flex items-center justify-center gap-4 mb-16">
+                    <span class="text-sm font-bold uppercase text-gray-400" id="monthly-label">Monthly Billing</span>
+                    <button id="pricing-toggle" class="w-16 h-9 bg-brand-charcoal border border-brand-cardBorder rounded-full p-1 relative transition-colors focus:outline-none">
+                        <div id="toggle-circle" class="w-7 h-7 bg-brand-orange rounded-full transition-transform transform translate-x-0"></div>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold uppercase text-white" id="annual-label">Annual Billing</span>
+                        <span class="bg-brand-orange/20 border border-brand-orange text-brand-orange font-extrabold text-[10px] uppercase px-2 py-0.5 rounded-full">Save 20%</span>
+                    </div>
+                </div>
+
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                    <!-- Basic Plan -->
+                    <div class="bg-brand-card border border-brand-cardBorder rounded-2xl p-8 flex flex-col justify-between hover:border-gray-500 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold uppercase text-white">Basic Access</h3>
+                                <span class="text-xs uppercase bg-brand-charcoal text-gray-400 px-3 py-1 rounded font-semibold">Standard</span>
+                            </div>
+                            <p class="text-brand-muted text-xs mb-6">Essential gym access for dedicated solo workouts.</p>
+                            <div class="mb-6">
+                                <span class="text-4xl font-black text-white price-value" data-monthly="39" data-annual="31">$39</span>
+                                <span class="text-brand-muted font-medium">/ month</span>
+                                <p class="text-[11px] text-gray-500 mt-1 price-billing-text">Billed monthly</p>
+                            </div>
+                            <ul class="space-y-3 text-sm text-gray-300 border-t border-brand-cardBorder pt-6 mb-8">
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Gym Floor & Equipment Access</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Standard Locker Room & Shower</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Free Mobile App Tracking</li>
+                                <li class="flex items-center gap-3 text-gray-600"><span class="text-gray-600">✕</span> Group Fitness Classes</li>
+                                <li class="flex items-center gap-3 text-gray-600"><span class="text-gray-600">✕</span> Cryo & Sauna Access</li>
+                            </ul>
+                        </div>
+                        <a href="#register" class="w-full py-3.5 border border-brand-cardBorder hover:border-brand-orange text-white hover:text-brand-orange font-bold uppercase tracking-wider text-sm rounded text-center transition-colors">
+                            Select Basic
+                        </a>
+                    </div>
+
+                    <!-- Pro Peak Plan (Featured) -->
+                    <div class="bg-brand-card border-2 border-brand-orange rounded-2xl p-8 flex flex-col justify-between relative shadow-glow transform md:-translate-y-2">
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-orange text-black font-extrabold text-xs uppercase px-4 py-1 rounded-full tracking-wider shadow">
+                            Most Popular Choice
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-4 pt-2">
+                                <h3 class="text-xl font-bold uppercase text-white">Peak Unlimited</h3>
+                                <span class="text-xs uppercase bg-brand-orange/20 text-brand-orange px-3 py-1 rounded font-bold">Pro</span>
+                            </div>
+                            <p class="text-brand-muted text-xs mb-6">Complete access to all facilities, classes, and perks.</p>
+                            <div class="mb-6">
+                                <span class="text-4xl font-black text-brand-orange price-value" data-monthly="69" data-annual="55">$69</span>
+                                <span class="text-brand-muted font-medium">/ month</span>
+                                <p class="text-[11px] text-gray-500 mt-1 price-billing-text">Billed monthly</p>
+                            </div>
+                            <ul class="space-y-3 text-sm text-gray-300 border-t border-brand-cardBorder pt-6 mb-8">
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> 24/7 All Location Access</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Unlimited Group Fitness Classes</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Infrared Sauna & Cold Plunge</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> 2 Guest Passes Per Month</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> 1 Monthly Body Comp Analysis</li>
+                            </ul>
+                        </div>
+                        <a href="#register" class="w-full py-4 bg-brand-orange hover:bg-brand-orangeHover text-black font-extrabold uppercase tracking-wider text-sm rounded text-center shadow transition-all">
+                            Start 7-Day Free Trial
+                        </a>
+                    </div>
+
+                    <!-- VIP Performance Plan -->
+                    <div class="bg-brand-card border border-brand-cardBorder rounded-2xl p-8 flex flex-col justify-between hover:border-gray-500 transition-all">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold uppercase text-white">VIP Performance</h3>
+                                <span class="text-xs uppercase bg-brand-charcoal text-yellow-500 px-3 py-1 rounded font-semibold">Elite</span>
+                            </div>
+                            <p class="text-brand-muted text-xs mb-6">For serious athletes seeking dedicated coaching & recovery.</p>
+                            <div class="mb-6">
+                                <span class="text-4xl font-black text-white price-value" data-monthly="119" data-annual="95">$119</span>
+                                <span class="text-brand-muted font-medium">/ month</span>
+                                <p class="text-[11px] text-gray-500 mt-1 price-billing-text">Billed monthly</p>
+                            </div>
+                            <ul class="space-y-3 text-sm text-gray-300 border-t border-brand-cardBorder pt-6 mb-8">
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Everything in Peak Unlimited</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> 2 Monthly Personal Training Sessions</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Full Cryo Lounge & Massage Access</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Dedicated Permanent Locker</li>
+                                <li class="flex items-center gap-3"><span class="text-brand-orange font-bold">✓</span> Custom Nutrition Plan Coaching</li>
+                            </ul>
+                        </div>
+                        <a href="#register" class="w-full py-3.5 border border-brand-cardBorder hover:border-brand-orange text-white hover:text-brand-orange font-bold uppercase tracking-wider text-sm rounded text-center transition-colors">
+                            Select VIP Tier
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expert Trainer Spotlight -->
+        <section id="trainers" class="py-24 bg-brand-charcoal/30 border-b border-brand-cardBorder relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-brand-orange font-bold text-sm uppercase tracking-widest">World-Class Mentors</h2>
+                    <p class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">MEET OUR ELITE COACHES</p>
+                    <p class="text-brand-muted">Certified professionals dedicated to breaking your plateaus and refining your form.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Trainer 1 -->
+                    <div class="bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden group hover:border-brand-orange transition-all duration-300">
+                        <div class="h-80 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=600" 
+                                 alt="Marcus Vance" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <span class="bg-brand-orange text-black font-extrabold text-[10px] uppercase px-2 py-0.5 rounded">Strength & Power</span>
+                                <h3 class="text-xl font-bold uppercase text-white mt-1">Marcus Vance</h3>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <p class="text-xs text-brand-muted">Former Olympic weightlifting coach with 10+ years helping athletes build raw force and power.</p>
+                            <div class="pt-2 border-t border-brand-cardBorder flex justify-between items-center text-xs">
+                                <span class="text-gray-400">Cert: CSCS, USAW II</span>
+                                <a href="#register" class="text-brand-orange font-bold hover:underline">Book Coach →</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trainer 2 -->
+                    <div class="bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden group hover:border-brand-orange transition-all duration-300">
+                        <div class="h-80 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600" 
+                                 alt="Elena Rostova" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <span class="bg-brand-orange text-black font-extrabold text-[10px] uppercase px-2 py-0.5 rounded">HIIT & Conditioning</span>
+                                <h3 class="text-xl font-bold uppercase text-white mt-1">Elena Rostova</h3>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <p class="text-xs text-brand-muted">High-energy conditioning expert specializing in cardiovascular endurance and body composition.</p>
+                            <div class="pt-2 border-t border-brand-cardBorder flex justify-between items-center text-xs">
+                                <span class="text-gray-400">Cert: NASM CPT, FMS</span>
+                                <a href="#register" class="text-brand-orange font-bold hover:underline">Book Coach →</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trainer 3 -->
+                    <div class="bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden group hover:border-brand-orange transition-all duration-300">
+                        <div class="h-80 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=600" 
+                                 alt="Jaxson Cross" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <span class="bg-brand-orange text-black font-extrabold text-[10px] uppercase px-2 py-0.5 rounded">Combat & Boxing</span>
+                                <h3 class="text-xl font-bold uppercase text-white mt-1">Jaxson Cross</h3>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <p class="text-xs text-brand-muted">Pro boxing veteran bringing ring mechanics, heavy bag drills, and mental toughness to your workouts.</p>
+                            <div class="pt-2 border-t border-brand-cardBorder flex justify-between items-center text-xs">
+                                <span class="text-gray-400">Cert: Golden Gloves Coach</span>
+                                <a href="#register" class="text-brand-orange font-bold hover:underline">Book Coach →</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trainer 4 -->
+                    <div class="bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden group hover:border-brand-orange transition-all duration-300">
+                        <div class="h-80 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600" 
+                                 alt="Maya Patel" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <span class="bg-brand-orange text-black font-extrabold text-[10px] uppercase px-2 py-0.5 rounded">Mobility & Yoga</span>
+                                <h3 class="text-xl font-bold uppercase text-white mt-1">Maya Patel</h3>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <p class="text-xs text-brand-muted">Movement and recovery specialist focused on joint health, injury prevention, and athletic yoga flow.</p>
+                            <div class="pt-2 border-t border-brand-cardBorder flex justify-between items-center text-xs">
+                                <span class="text-gray-400">Cert: E-RYT 500, Kinstretch</span>
+                                <a href="#register" class="text-brand-orange font-bold hover:underline">Book Coach →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gym Location Map & Hours -->
+        <section id="location" class="py-24 bg-brand-dark border-b border-brand-cardBorder relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-brand-orange font-bold text-sm uppercase tracking-widest">Find Your Nearest Gym</h2>
+                    <p class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">LOCATIONS & HOURS</p>
+                    <p class="text-brand-muted">Convenient premium facilities open 24/7 across the metropolitan region.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                    <!-- Location Selector & Details -->
+                    <div class="lg:col-span-5 flex flex-col justify-between bg-brand-card border border-brand-cardBorder rounded-xl p-6 sm:p-8">
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-brand-orange mb-4">Select Location</h3>
+                            
+                            <!-- Location Tabs -->
+                            <div class="grid grid-cols-3 gap-2 mb-8" id="location-tabs">
+                                <button class="loc-tab-btn active bg-brand-orange text-black font-extrabold text-xs uppercase py-2.5 px-2 rounded transition-all text-center" data-loc="downtown">
+                                    Downtown
+                                </button>
+                                <button class="loc-tab-btn bg-brand-charcoal text-gray-300 border border-brand-cardBorder hover:border-gray-500 font-extrabold text-xs uppercase py-2.5 px-2 rounded transition-all text-center" data-loc="uptown">
+                                    Uptown
+                                </button>
+                                <button class="loc-tab-btn bg-brand-charcoal text-gray-300 border border-brand-cardBorder hover:border-gray-500 font-extrabold text-xs uppercase py-2.5 px-2 rounded transition-all text-center" data-loc="westside">
+                                    Westside
+                                </button>
+                            </div>
+
+                            <!-- Location Info Content -->
+                            <div id="location-details" class="space-y-6">
+                                <!-- Rendered dynamically via JS -->
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-brand-cardBorder mt-6">
+                            <a href="#register" class="block text-center w-full bg-brand-charcoal hover:bg-brand-cardBorder border border-brand-cardBorder text-white font-bold py-3 rounded uppercase text-xs tracking-wider transition-colors">
+                                Get Directions to Selected Gym
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Visual Interactive Map Screen -->
+                    <div class="lg:col-span-7 bg-brand-card border border-brand-cardBorder rounded-xl overflow-hidden relative min-h-[400px] flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=1200" 
+                             alt="Map Graphic" 
+                             class="absolute inset-0 w-full h-full object-cover filter brightness-30 contrast-150 grayscale">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-brand-card/50"></div>
+
+                        <!-- Map Interactive Pins Overlay -->
+                        <div class="relative z-10 p-6 text-center space-y-4 max-w-md bg-brand-dark/85 backdrop-blur-md rounded-xl border border-brand-cardBorder">
+                            <div class="w-12 h-12 rounded-full bg-brand-orange/20 border-2 border-brand-orange flex items-center justify-center mx-auto text-brand-orange animate-bounce">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                            </div>
+                            <h4 id="map-location-name" class="text-xl font-black uppercase text-white">Downtown Flagship</h4>
+                            <p id="map-location-addr" class="text-xs text-brand-muted">450 Ironworks Avenue, Central District</p>
+                            <div class="flex justify-center items-center gap-2 text-xs text-brand-orange font-bold uppercase">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                24/7 Member Keycard Access Active
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact & Class Registration Form -->
+        <section id="register" class="py-24 bg-brand-charcoal/40 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Info Text -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <span class="text-brand-orange font-bold text-sm uppercase tracking-widest">Start For Free</span>
+                        <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight text-white leading-none">
+                            CLAIM YOUR <br><span class="text-brand-orange">FREE 7-DAY PASS</span>
+                        </h2>
+                        <p class="text-brand-muted leading-relaxed">
+                            Take the first step towards your physical peak. Fill out the form to secure your pass and schedule your introductory coaching session.
+                        </p>
+
+                        <div class="space-y-4 pt-4">
+                            <div class="flex items-start gap-4 p-4 bg-brand-card rounded-lg border border-brand-cardBorder">
+                                <div class="w-10 h-10 rounded bg-brand-orange/10 border border-brand-orange/30 flex items-center justify-center text-brand-orange shrink-0 font-bold">1</div>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm uppercase">Instant Digital Access</h4>
+                                    <p class="text-xs text-brand-muted">Receive your pass barcode immediately via email and SMS.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-brand-card rounded-lg border border-brand-cardBorder">
+                                <div class="w-10 h-10 rounded bg-brand-orange/10 border border-brand-orange/30 flex items-center justify-center text-brand-orange shrink-0 font-bold">2</div>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm uppercase">Free Fitness Assessment</h4>
+                                    <p class="text-xs text-brand-muted">Optional 30-minute body scan and goal mapping session with a coach.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-brand-card rounded-lg border border-brand-cardBorder">
+                                <div class="w-10 h-10 rounded bg-brand-orange/10 border border-brand-orange/30 flex items-center justify-center text-brand-orange shrink-0 font-bold">3</div>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm uppercase">Zero Commitment</h4>
+                                    <p class="text-xs text-brand-muted">No credit card required to start your 7-day trial pass.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Form Card -->
+                    <div class="lg:col-span-7 bg-brand-card border border-brand-cardBorder rounded-2xl p-6 sm:p-10 shadow-2xl relative">
+                        <form id="trial-registration-form" class="space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">First Name *</label>
+                                    <input type="text" required placeholder="Alex" class="w-full bg-brand-charcoal border border-brand-cardBorder rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Last Name *</label>
+                                    <input type="text" required placeholder="Smith" class="w-full bg-brand-charcoal border border-brand-cardBorder rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Email Address *</label>
+                                    <input type="email" required placeholder="alex@example.com" class="w-full bg-brand-charcoal border border-brand-cardBorder rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Phone Number *</label>
+                                    <input type="tel" required placeholder="(555) 000-0000" class="w-full bg-brand-charcoal border border-brand-cardBorder rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Preferred Location</label>
+                                    <select class="w-full bg-brand-charcoal border border-brand-cardBorder rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                        <option value="downtown">Downtown Flagship Hub</option>
+                                        <option value="uptown">Uptown Power House</option>
+                                        <option value="westside">Westside Performance Hub</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Preferred Trial Time Slot</label>
+                                    <select class="w-full bg-brand-charcoal border border-brand-cardBorder rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-orange transition-colors">
+                                        <option value="morning">Morning (6:00 AM - 10:00 AM)</option>
+                                        <option value="midday">Midday (11:00 AM - 2:00 PM)</option>
+                                        <option value="evening">Evening (4:00 PM - 8:00 PM)</option>
+                                        <option value="night">Late Night (8:00 PM - 11:00 PM)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Primary Fitness Goal</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="goal" value="muscle" class="peer sr-only" checked>
+                                        <div class="border border-brand-cardBorder bg-brand-charcoal peer-checked:border-brand-orange peer-checked:text-brand-orange p-3 rounded text-center text-xs font-bold uppercase transition-colors">
+                                            Build Muscle
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="goal" value="fatloss" class="peer sr-only">
+                                        <div class="border border-brand-cardBorder bg-brand-charcoal peer-checked:border-brand-orange peer-checked:text-brand-orange p-3 rounded text-center text-xs font-bold uppercase transition-colors">
+                                            Fat Loss
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="goal" value="stamina" class="peer sr-only">
+                                        <div class="border border-brand-cardBorder bg-brand-charcoal peer-checked:border-brand-orange peer-checked:text-brand-orange p-3 rounded text-center text-xs font-bold uppercase transition-colors">
+                                            Stamina
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="goal" value="health" class="peer sr-only">
+                                        <div class="border border-brand-cardBorder bg-brand-charcoal peer-checked:border-brand-orange peer-checked:text-brand-orange p-3 rounded text-center text-xs font-bold uppercase transition-colors">
+                                            General Fit
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-black font-black text-lg py-4 rounded-lg uppercase tracking-wider shadow-glow hover:shadow-none transition-all">
+                                Activate Free Pass Now
+                            </button>
+
+                            <p class="text-[11px] text-center text-gray-500">
+                                By signing up, you agree to receive fitness updates and trial pass activation instructions. Cancel anytime.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- FOOTER WITH DATA EXPORT & CLEAR OPTIONS -->
-    <footer class="mt-8 pt-4 border-t border-slate-800/80 text-slate-500 text-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Local Storage Auto-Saved</span>
-      </div>
+    <!-- Footer -->
+    <footer class="bg-brand-dark border-t border-brand-cardBorder py-16 text-gray-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div class="space-y-4">
+                    <a href="#" class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded bg-brand-orange flex items-center justify-center font-black text-black">
+                            ⚡
+                        </div>
+                        <span class="text-xl font-extrabold tracking-wider text-white uppercase font-display">
+                            PEAK<span class="text-brand-orange">PERFORMANCE</span>
+                        </span>
+                    </a>
+                    <p class="text-xs text-brand-muted leading-relaxed">
+                        The ultimate destination for strength, conditioning, and recovery. Built for those who demand excellence.
+                    </p>
+                </div>
 
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <!-- Export Button -->
-        <button id="exportBtn" class="hover:text-teal-400 transition flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-          </svg>
-          Export Data
-        </button>
+                <div>
+                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#facilities" class="hover:text-brand-orange transition-colors">Workout Zones</a></li>
+                        <li><a href="#schedule" class="hover:text-brand-orange transition-colors">Class Timetable</a></li>
+                        <li><a href="#pricing" class="hover:text-brand-orange transition-colors">Membership Pricing</a></li>
+                        <li><a href="#trainers" class="hover:text-brand-orange transition-colors">Coaches & Trainers</a></li>
+                    </ul>
+                </div>
 
-        <span class="text-slate-700">•</span>
+                <div>
+                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">Operating Hours</h4>
+                    <ul class="space-y-2 text-xs text-brand-muted">
+                        <li><strong class="text-gray-200">Keycard Access:</strong> 24 Hours / 7 Days</li>
+                        <li><strong class="text-gray-200">Front Desk:</strong> Mon - Sun: 6am - 10pm</li>
+                        <li><strong class="text-gray-200">Childcare Hub:</strong> Mon - Sat: 8am - 1pm</li>
+                    </ul>
+                </div>
 
-        <!-- Import Button & Hidden Input -->
-        <label for="importInput" class="hover:text-teal-400 transition flex items-center gap-1 cursor-pointer">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-          </svg>
-          Import Data
-        </label>
-        <input type="file" id="importInput" accept=".json" class="hidden" />
+                <div>
+                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">Connect With Us</h4>
+                    <p class="text-xs text-brand-muted mb-4">Follow us for workout routines, motivation, and member stories.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-9 h-9 rounded bg-brand-card border border-brand-cardBorder hover:border-brand-orange flex items-center justify-center text-white hover:text-brand-orange transition-colors">IG</a>
+                        <a href="#" class="w-9 h-9 rounded bg-brand-card border border-brand-cardBorder hover:border-brand-orange flex items-center justify-center text-white hover:text-brand-orange transition-colors">YT</a>
+                        <a href="#" class="w-9 h-9 rounded bg-brand-card border border-brand-cardBorder hover:border-brand-orange flex items-center justify-center text-white hover:text-brand-orange transition-colors">FB</a>
+                        <a href="#" class="w-9 h-9 rounded bg-brand-card border border-brand-cardBorder hover:border-brand-orange flex items-center justify-center text-white hover:text-brand-orange transition-colors">X</a>
+                    </div>
+                </div>
+            </div>
 
-        <span class="text-slate-700">•</span>
-
-        <!-- Clear Completed -->
-        <button id="clearCompletedBtn" class="hover:text-amber-400 transition">
-          Clear Completed
-        </button>
-
-        <span class="text-slate-700">•</span>
-
-        <!-- Reset All -->
-        <button id="clearAllBtn" class="hover:text-rose-400 transition">
-          Reset All
-        </button>
-      </div>
+            <div class="border-t border-brand-cardBorder pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; <span id="year"></span> Peak Performance Gym Ltd. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-gray-400">Privacy Policy</a>
+                    <a href="#" class="hover:text-gray-400">Terms of Service</a>
+                    <a href="#" class="hover:text-gray-400">Gym Rules</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-  </div>
-
-  <!-- EDIT TASK MODAL -->
-  <div id="editModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 w-full max-w-md shadow-2xl space-y-4">
-      <h3 class="text-lg font-bold text-white flex items-center gap-2">
-        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-        </svg>
-        Edit Task
-      </h3>
-      <input type="hidden" id="editTaskId" />
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Task Title</label>
-          <input type="text" id="editTaskTitle" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-teal-400" />
+    <!-- Success Confirmation Modal -->
+    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-brand-card border-2 border-brand-orange rounded-2xl p-8 max-w-md w-full mx-4 shadow-glow text-center space-y-6 relative transform scale-95 transition-transform duration-300" id="modal-box">
+            <div class="w-16 h-16 bg-brand-orange/20 border-2 border-brand-orange text-brand-orange rounded-full flex items-center justify-center mx-auto text-3xl font-black">
+                ✓
+            </div>
+            <div>
+                <h3 class="text-2xl font-black uppercase text-white mb-2">PASS ACTIVATED!</h3>
+                <p class="text-sm text-brand-muted">Your 7-Day Free Pass pass code has been generated. Check your email for full access details and coach scheduling link.</p>
+            </div>
+            <div class="bg-brand-charcoal border border-brand-cardBorder p-4 rounded text-left space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-gray-400">Pass Code:</span> <span class="font-mono text-brand-orange font-bold">PEAK-7DAY-FREE</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Status:</span> <span class="text-green-400 font-bold">Ready to Use</span></div>
+            </div>
+            <button id="close-modal-btn" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-black font-extrabold py-3 rounded uppercase tracking-wider">
+                Awesome, Let's Go!
+            </button>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Priority</label>
-            <select id="editTaskPriority" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-400">
-              <option value="low">🟢 Low</option>
-              <option value="medium">🟡 Medium</option>
-              <option value="high">🔴 High</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Category</label>
-            <select id="editTaskCategory" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-400">
-              <option value="Work">💼 Work</option>
-              <option value="Personal">👤 Personal</option>
-              <option value="Learning">📚 Learning</option>
-              <option value="Health">🧘 Health</option>
-              <option value="Finance">💳 Finance</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button id="cancelEditBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">Cancel</button>
-        <button id="saveEditBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-teal-400 hover:bg-teal-300 transition">Save Changes</button>
-      </div>
     </div>
-  </div>
 
-  <!-- APPLICATION LOGIC -->
-  <script>
-    // Initial Default Tasks if LocalStorage is Empty
-    const defaultTasks = [
-      {
-        id: '1',
-        title: 'Complete project architecture document',
-        completed: false,
-        priority: 'high',
-        category: 'Work',
-        createdAt: Date.now() - 1000 * 60 * 60 * 2
-      },
-      {
-        id: '2',
-        title: '30-minute cardio and hydration routine',
-        completed: true,
-        priority: 'medium',
-        category: 'Health',
-        createdAt: Date.now() - 1000 * 60 * 60 * 24
-      },
-      {
-        id: '3',
-        title: 'Review weekly budget and expenses',
-        completed: false,
-        priority: 'low',
-        category: 'Finance',
-        createdAt: Date.now() - 1000 * 60 * 60 * 5
-      }
-    ];
+    <!-- JavaScript Features Implementation -->
+    <script>
+        // Set dynamic year
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-    // State Management
-    let tasks = [];
-    let currentStatusFilter = 'all';
-    let currentPriorityFilter = 'all';
-    let currentCategoryFilter = 'all';
-    let searchQuery = '';
-    let currentSortBy = 'newest';
+        // 1. Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const iconOpen = document.getElementById('menu-icon-open');
+        const iconClose = document.getElementById('menu-icon-close');
 
-    // DOM Elements
-    const taskList = document.getElementById('taskList');
-    const emptyState = document.getElementById('emptyState');
-    const addTaskForm = document.getElementById('addTaskForm');
-    const taskInput = document.getElementById('taskInput');
-    const prioritySelect = document.getElementById('prioritySelect');
-    const categorySelect = document.getElementById('categorySelect');
-    const searchInput = document.getElementById('searchInput');
-    const filterPriority = document.getElementById('filterPriority');
-    const filterCategory = document.getElementById('filterCategory');
-    const sortBy = document.getElementById('sortBy');
-    const statusBtns = document.querySelectorAll('.filter-status-btn');
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            iconOpen.classList.toggle('hidden');
+            iconClose.classList.toggle('hidden');
+        });
 
-    // Stats DOM
-    const statTotal = document.getElementById('statTotal');
-    const statActive = document.getElementById('statActive');
-    const statDone = document.getElementById('statDone');
-    const progressBar = document.getElementById('progressBar');
-    const progressPercent = document.getElementById('progressPercent');
-    const progressMessage = document.getElementById('progressMessage');
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                iconOpen.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+            });
+        });
 
-    // Modal DOM
-    const editModal = document.getElementById('editModal');
-    const editTaskId = document.getElementById('editTaskId');
-    const editTaskTitle = document.getElementById('editTaskTitle');
-    const editTaskPriority = document.getElementById('editTaskPriority');
-    const editTaskCategory = document.getElementById('editTaskCategory');
-    const cancelEditBtn = document.getElementById('cancelEditBtn');
-    const saveEditBtn = document.getElementById('saveEditBtn');
+        // 2. Class Schedule Data & Filtering logic
+        const classesData = [
+            // Mon
+            { day: 'Mon', time: '06:30 AM', name: 'Dawn Conditioning', trainer: 'Elena Rostova', cat: 'HIIT', duration: '50m', level: 'All Levels' },
+            { day: 'Mon', time: '09:00 AM', name: 'Iron Powerlifting', trainer: 'Marcus Vance', cat: 'Strength', duration: '60m', level: 'Intermediate' },
+            { day: 'Mon', time: '05:30 PM', name: 'Boxing Tech & Sparring', trainer: 'Jaxson Cross', cat: 'Boxing', duration: '60m', level: 'All Levels' },
+            { day: 'Mon', time: '07:00 PM', name: 'Athletic Recovery Flow', trainer: 'Maya Patel', cat: 'Yoga', duration: '45m', level: 'All Levels' },
+            
+            // Tue
+            { day: 'Tue', time: '07:00 AM', name: 'HIIT Sled & Sprint', trainer: 'Elena Rostova', cat: 'HIIT', duration: '45m', level: 'Advanced' },
+            { day: 'Tue', time: '10:30 AM', name: 'Hot Mobility Yoga', trainer: 'Maya Patel', cat: 'Yoga', duration: '60m', level: 'All Levels' },
+            { day: 'Tue', time: '06:00 PM', name: 'Heavy Bag Burnout', trainer: 'Jaxson Cross', cat: 'Boxing', duration: '50m', level: 'Intermediate' },
+            
+            // Wed
+            { day: 'Wed', time: '06:30 AM', name: 'Hypertrophy Upper Body', trainer: 'Marcus Vance', cat: 'Strength', duration: '60m', level: 'All Levels' },
+            { day: 'Wed', time: '05:00 PM', name: 'Endurance Metabolic HIIT', trainer: 'Elena Rostova', cat: 'HIIT', duration: '50m', level: 'Intermediate' },
+            { day: 'Wed', time: '06:30 PM', name: 'Pro Combat Conditioning', trainer: 'Jaxson Cross', cat: 'Boxing', duration: '60m', level: 'Advanced' },
+            
+            // Thu
+            { day: 'Thu', time: '07:00 AM', name: 'Functional Core & Turf', trainer: 'Elena Rostova', cat: 'HIIT', duration: '45m', level: 'All Levels' },
+            { day: 'Thu', time: '05:30 PM', name: 'Deadlift & Squat Lab', trainer: 'Marcus Vance', cat: 'Strength', duration: '60m', level: 'Intermediate' },
+            { day: 'Thu', time: '07:00 PM', name: 'Restorative Vinyasa', trainer: 'Maya Patel', cat: 'Yoga', duration: '60m', level: 'All Levels' },
 
-    // Footer DOM
-    const exportBtn = document.getElementById('exportBtn');
-    const importInput = document.getElementById('importInput');
-    const clearCompletedBtn = document.getElementById('clearCompletedBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
+            // Fri
+            { day: 'Fri', time: '06:30 AM', name: 'Friday Shred HIIT', trainer: 'Elena Rostova', cat: 'HIIT', duration: '50m', level: 'All Levels' },
+            { day: 'Fri', time: '04:30 PM', name: 'Boxing Gloves Up', trainer: 'Jaxson Cross', cat: 'Boxing', duration: '50m', level: 'Beginner' },
+            { day: 'Fri', time: '06:00 PM', name: 'Full Body Compound', trainer: 'Marcus Vance', cat: 'Strength', duration: '60m', level: 'All Levels' },
 
-    // Initialize App
-    function init() {
-      loadTasks();
-      setupEventListeners();
-      render();
-    }
+            // Sat
+            { day: 'Sat', time: '08:30 AM', name: 'Weekend Warrior HIIT', trainer: 'Elena Rostova', cat: 'HIIT', duration: '60m', level: 'All Levels' },
+            { day: 'Sat', time: '10:00 AM', name: 'Power Lifting Clinic', trainer: 'Marcus Vance', cat: 'Strength', duration: '75m', level: 'All Levels' },
+            { day: 'Sat', time: '11:30 AM', name: 'Deep Stretch & Release', trainer: 'Maya Patel', cat: 'Yoga', duration: '50m', level: 'All Levels' },
 
-    // Load from LocalStorage
-    function loadTasks() {
-      const stored = localStorage.getItem('taskflow_tasks');
-      if (stored) {
-        try {
-          tasks = JSON.parse(stored);
-        } catch (e) {
-          tasks = [...defaultTasks];
+            // Sun
+            { day: 'Sun', time: '09:00 AM', name: 'Sunday Engine Builder', trainer: 'Jaxson Cross', cat: 'HIIT', duration: '60m', level: 'All Levels' },
+            { day: 'Sun', time: '10:30 AM', name: 'Yin Yoga & Breathwork', trainer: 'Maya Patel', cat: 'Yoga', duration: '60m', level: 'All Levels' }
+        ];
+
+        let selectedDay = 'Mon';
+        let selectedCategory = 'all';
+
+        const scheduleContainer = document.getElementById('schedule-container');
+
+        function renderSchedule() {
+            const filtered = classesData.filter(item => {
+                const matchDay = item.day === selectedDay;
+                const matchCat = selectedCategory === 'all' || item.cat === selectedCategory;
+                return matchDay && matchCat;
+            });
+
+            if (filtered.length === 0) {
+                scheduleContainer.innerHTML = `
+                    <div class="py-12 text-center text-brand-muted font-medium">
+                        No classes found matching the selected category for ${selectedDay}.
+                    </div>
+                `;
+                return;
+            }
+
+            scheduleContainer.innerHTML = filtered.map(cls => `
+                <div class="py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors hover:bg-brand-charcoal/40 px-3 rounded-lg">
+                    <div class="flex items-start sm:items-center gap-4">
+                        <div class="bg-brand-dark border border-brand-cardBorder text-brand-orange font-mono font-bold text-sm px-3 py-2 rounded shrink-0">
+                            ${cls.time}
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs uppercase font-extrabold px-2 py-0.5 rounded bg-brand-charcoal border border-brand-cardBorder text-gray-300">${cls.cat}</span>
+                                <span class="text-xs text-brand-muted">${cls.duration} • ${cls.level}</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-white uppercase">${cls.name}</h4>
+                            <p class="text-xs text-brand-muted">Instructor: <span class="text-gray-200 font-semibold">${cls.trainer}</span></p>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="#register" class="inline-block w-full md:w-auto text-center bg-brand-charcoal hover:bg-brand-orange hover:text-black border border-brand-cardBorder hover:border-brand-orange text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded transition-all">
+                            Book Spot
+                        </a>
+                    </div>
+                </div>
+            `).join('');
         }
-      } else {
-        tasks = [...defaultTasks];
-        saveTasks();
-      }
-    }
 
-    // Save to LocalStorage
-    function saveTasks() {
-      localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
-    }
+        // Day filter listeners
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.day-btn').forEach(b => {
+                    b.classList.remove('bg-brand-orange', 'text-black');
+                    b.classList.add('bg-brand-card', 'text-gray-300');
+                });
+                btn.classList.remove('bg-brand-card', 'text-gray-300');
+                btn.classList.add('bg-brand-orange', 'text-black');
+                
+                selectedDay = btn.getAttribute('data-day');
+                renderSchedule();
+            });
+        });
 
-    // Event Listeners Setup
-    function setupEventListeners() {
-      // Add Task
-      addTaskForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const title = taskInput.value.trim();
-        if (!title) return;
+        // Category filter listeners
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.cat-btn').forEach(b => {
+                    b.classList.remove('bg-brand-orange/20', 'border-brand-orange', 'text-brand-orange');
+                    b.classList.add('bg-brand-card', 'border-brand-cardBorder', 'text-gray-400');
+                });
+                btn.classList.remove('bg-brand-card', 'border-brand-cardBorder', 'text-gray-400');
+                btn.classList.add('bg-brand-orange/20', 'border-brand-orange', 'text-brand-orange');
 
-        const newTask = {
-          id: Date.now().toString(),
-          title: title,
-          completed: false,
-          priority: prioritySelect.value,
-          category: categorySelect.value,
-          createdAt: Date.now()
+                selectedCategory = btn.getAttribute('data-cat');
+                renderSchedule();
+            });
+        });
+
+        // Initial schedule render
+        renderSchedule();
+
+        // 3. Interactive Membership Pricing Toggle
+        const pricingToggle = document.getElementById('pricing-toggle');
+        const toggleCircle = document.getElementById('toggle-circle');
+        let isAnnual = false;
+
+        pricingToggle.addEventListener('click', () => {
+            isAnnual = !isAnnual;
+            if (isAnnual) {
+                toggleCircle.classList.add('translate-x-7');
+            } else {
+                toggleCircle.classList.remove('translate-x-7');
+            }
+
+            // Update prices
+            document.querySelectorAll('.price-value').forEach(el => {
+                const monthly = el.getAttribute('data-monthly');
+                const annual = el.getAttribute('data-annual');
+                el.textContent = isAnnual ? `$${annual}` : `$${monthly}`;
+            });
+
+            document.querySelectorAll('.price-billing-text').forEach(el => {
+                el.textContent = isAnnual ? 'Billed annually (Save 20%)' : 'Billed monthly';
+            });
+        });
+
+        // 4. Interactive Gym Location Map & Hours Component
+        const locationData = {
+            downtown: {
+                name: "Downtown Flagship",
+                address: "450 Ironworks Avenue, Central District",
+                phone: "(555) 019-2834",
+                hours: "24/7 Access (Staffed: 6am - 10pm)",
+                features: "50m Turf Track, Heavy Iron Arena, Recovery Spa",
+                parking: "Free 2-hour garage parking validation"
+            },
+            uptown: {
+                name: "Uptown Power House",
+                address: "880 North Park Skyline Blvd",
+                phone: "(555) 018-9941",
+                hours: "24/7 Access (Staffed: 6am - 9pm)",
+                features: "Boxing Ring Studio, Smart Cardio Lounge, Cryo Tubs",
+                parking: "Dedicated member lot on premise"
+            },
+            westside: {
+                name: "Westside Performance Hub",
+                address: "120 Ocean View Boulevard",
+                phone: "(555) 014-5522",
+                hours: "24/7 Access (Staffed: 5am - 11pm)",
+                features: "Olympic Lifting Platforms, Hot Yoga Studio, Sauna",
+                parking: "Street parking & adjacent valet"
+            }
         };
 
-        tasks.unshift(newTask);
-        saveTasks();
-        taskInput.value = '';
-        render();
-      });
+        const locationDetailsContainer = document.getElementById('location-details');
+        const mapName = document.getElementById('map-location-name');
+        const mapAddr = document.getElementById('map-location-addr');
 
-      // Search Input
-      searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value.toLowerCase();
-        render();
-      });
+        function renderLocation(key) {
+            const loc = locationData[key];
+            locationDetailsContainer.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-2xl font-black text-white uppercase">${loc.name}</h4>
+                        <p class="text-sm text-brand-muted">${loc.address}</p>
+                    </div>
 
-      // Status Filter Buttons
-      statusBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          statusBtns.forEach(b => {
-            b.classList.remove('bg-teal-500/10', 'text-teal-400', 'border', 'border-teal-500/20');
-            b.classList.add('text-slate-400');
-          });
-          btn.classList.remove('text-slate-400');
-          btn.classList.add('bg-teal-500/10', 'text-teal-400', 'border', 'border-teal-500/20');
-          currentStatusFilter = btn.dataset.status;
-          render();
+                    <div class="space-y-3 pt-2 text-xs">
+                        <div class="flex items-start gap-3">
+                            <span class="text-brand-orange font-bold">🕒</span>
+                            <div>
+                                <span class="font-bold text-gray-300 uppercase block">Hours of Operation</span>
+                                <span class="text-brand-muted">${loc.hours}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-brand-orange font-bold">📞</span>
+                            <div>
+                                <span class="font-bold text-gray-300 uppercase block">Direct Phone</span>
+                                <span class="text-brand-muted">${loc.phone}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-brand-orange font-bold">⚡</span>
+                            <div>
+                                <span class="font-bold text-gray-300 uppercase block">Key Zone Highlights</span>
+                                <span class="text-brand-muted">${loc.features}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-brand-orange font-bold">🚗</span>
+                            <div>
+                                <span class="font-bold text-gray-300 uppercase block">Parking & Transit</span>
+                                <span class="text-brand-muted">${loc.parking}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            mapName.textContent = loc.name;
+            mapAddr.textContent = loc.address;
+        }
+
+        document.querySelectorAll('.loc-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.loc-tab-btn').forEach(b => {
+                    b.classList.remove('bg-brand-orange', 'text-black');
+                    b.classList.add('bg-brand-charcoal', 'text-gray-300', 'border', 'border-brand-cardBorder');
+                });
+                btn.classList.remove('bg-brand-charcoal', 'text-gray-300', 'border', 'border-brand-cardBorder');
+                btn.classList.add('bg-brand-orange', 'text-black');
+
+                const key = btn.getAttribute('data-loc');
+                renderLocation(key);
+            });
         });
-      });
 
-      // Set initial active status tab style
-      document.querySelector('[data-status="all"]').classList.add('bg-teal-500/10', 'text-teal-400', 'border', 'border-teal-500/20');
+        // Initial location render
+        renderLocation('downtown');
 
-      // Dropdown Filters
-      filterPriority.addEventListener('change', (e) => {
-        currentPriorityFilter = e.target.value;
-        render();
-      });
+        // 5. Registration Form Submit Handling & Modal
+        const trialForm = document.getElementById('trial-registration-form');
+        const heroQuickForm = document.getElementById('hero-quick-form');
+        const successModal = document.getElementById('success-modal');
+        const modalBox = document.getElementById('modal-box');
+        const closeModalBtn = document.getElementById('close-modal-btn');
 
-      filterCategory.addEventListener('change', (e) => {
-        currentCategoryFilter = e.target.value;
-        render();
-      });
-
-      sortBy.addEventListener('change', (e) => {
-        currentSortBy = e.target.value;
-        render();
-      });
-
-      // Modal Actions
-      cancelEditBtn.addEventListener('click', closeModal);
-      saveEditBtn.addEventListener('click', handleSaveEdit);
-
-      // Footer Actions
-      exportBtn.addEventListener('click', exportData);
-      importInput.addEventListener('change', importData);
-      clearCompletedBtn.addEventListener('click', clearCompleted);
-      clearAllBtn.addEventListener('click', clearAll);
-    }
-
-    // Filter & Sort Logic
-    function getFilteredTasks() {
-      return tasks.filter(task => {
-        // Status Filter
-        if (currentStatusFilter === 'active' && task.completed) return false;
-        if (currentStatusFilter === 'completed' && !task.completed) return false;
-
-        // Priority Filter
-        if (currentPriorityFilter !== 'all' && task.priority !== currentPriorityFilter) return false;
-
-        // Category Filter
-        if (currentCategoryFilter !== 'all' && task.category !== currentCategoryFilter) return false;
-
-        // Search Filter
-        if (searchQuery && !task.title.toLowerCase().includes(searchQuery)) return false;
-
-        return true;
-      }).sort((a, b) => {
-        if (currentSortBy === 'newest') return b.createdAt - a.createdAt;
-        if (currentSortBy === 'oldest') return a.createdAt - b.createdAt;
-        if (currentSortBy === 'priority') {
-          const priorityWeight = { high: 3, medium: 2, low: 1 };
-          return priorityWeight[b.priority] - priorityWeight[a.priority];
+        function openModal() {
+            successModal.classList.remove('hidden');
+            setTimeout(() => {
+                successModal.classList.remove('opacity-0');
+                modalBox.classList.remove('scale-95');
+                modalBox.classList.add('scale-100');
+            }, 10);
         }
-        return 0;
-      });
-    }
 
-    // Render Function
-    function render() {
-      const filtered = getFilteredTasks();
-      updateStats();
-
-      if (filtered.length === 0) {
-        taskList.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-      taskList.innerHTML = filtered.map(task => renderTaskCard(task)).join('');
-    }
-
-    // Task Card Template
-    function renderTaskCard(task) {
-      const priorityBadge = {
-        high: '<span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20">High</span>',
-        medium: '<span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">Medium</span>',
-        low: '<span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Low</span>',
-      }[task.priority] || '';
-
-      const categoryIcons = {
-        Work: '💼',
-        Personal: '👤',
-        Learning: '📚',
-        Health: '🧘',
-        Finance: '💳'
-      };
-
-      const categoryLabel = `${categoryIcons[task.category] || '🏷️'} ${task.category}`;
-
-      return `
-        <div class="group bg-slate-900/80 hover:bg-slate-900 border ${task.completed ? 'border-slate-800/60 opacity-75' : 'border-slate-800 hover:border-slate-700'} rounded-2xl p-4 transition-all duration-200 flex items-center justify-between gap-3 shadow-md">
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            <!-- Checkbox Toggle -->
-            <button 
-              onclick="toggleTask('${task.id}')"
-              class="flex-shrink-0 w-6 h-6 rounded-lg border ${task.completed ? 'bg-teal-500 border-teal-500 text-slate-950' : 'border-slate-700 hover:border-teal-400 text-transparent'} flex items-center justify-center transition-all duration-200"
-            >
-              <svg class="w-4 h-4 stroke-current stroke-[3]" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            </button>
-
-            <!-- Task Title & Badges -->
-            <div class="min-w-0 flex-1 space-y-1">
-              <p class="text-sm font-medium ${task.completed ? 'line-through text-slate-500' : 'text-slate-100'} truncate transition">
-                ${escapeHtml(task.title)}
-              </p>
-              <div class="flex flex-wrap items-center gap-2">
-                ${priorityBadge}
-                <span class="px-2 py-0.5 text-[10px] font-medium rounded-md bg-slate-800 text-slate-300 border border-slate-700/50">
-                  ${categoryLabel}
-                </span>
-                <span class="text-[10px] text-slate-500">
-                  ${formatTime(task.createdAt)}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex items-center gap-1 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-            <button 
-              onclick="openEditModal('${task.id}')" 
-              class="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition"
-              title="Edit Task"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-              </svg>
-            </button>
-            <button 
-              onclick="deleteTask('${task.id}')" 
-              class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
-              title="Delete Task"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    // Toggle Task Completion
-    window.toggleTask = function(id) {
-      tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
-      saveTasks();
-      render();
-    };
-
-    // Delete Task
-    window.deleteTask = function(id) {
-      tasks = tasks.filter(t => t.id !== id);
-      saveTasks();
-      render();
-    };
-
-    // Open Edit Modal
-    window.openEditModal = function(id) {
-      const task = tasks.find(t => t.id === id);
-      if (!task) return;
-
-      editTaskId.value = task.id;
-      editTaskTitle.value = task.title;
-      editTaskPriority.value = task.priority;
-      editTaskCategory.value = task.category;
-
-      editModal.classList.remove('hidden');
-    };
-
-    function closeModal() {
-      editModal.classList.add('hidden');
-    }
-
-    function handleSaveEdit() {
-      const id = editTaskId.value;
-      const title = editTaskTitle.value.trim();
-      if (!title) return;
-
-      tasks = tasks.map(t => t.id === id ? {
-        ...t,
-        title: title,
-        priority: editTaskPriority.value,
-        category: editTaskCategory.value
-      } : t);
-
-      saveTasks();
-      closeModal();
-      render();
-    }
-
-    // Update Productivity Summary Stats
-    function updateStats() {
-      const total = tasks.length;
-      const completed = tasks.filter(t => t.completed).length;
-      const active = total - completed;
-      const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-      statTotal.textContent = total;
-      statActive.textContent = active;
-      statDone.textContent = completed;
-      progressPercent.textContent = `${percentage}%`;
-      progressBar.style.width = `${percentage}%`;
-
-      // Update motivational message
-      if (total === 0) {
-        progressMessage.textContent = "Your task list is clean. Time to plan ahead!";
-      } else if (percentage === 100) {
-        progressMessage.textContent = "🎉 Amazing work! All tasks completed!";
-      } else if (percentage >= 50) {
-        progressMessage.textContent = "🚀 Over halfway there! Keep pushing!";
-      } else {
-        progressMessage.textContent = "💪 Great start. Focus on high priority items first.";
-      }
-    }
-
-    // Export Data as JSON file
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tasks, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `TaskFlow_Backup_${new Date().toISOString().slice(0, 10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    // Import Data from JSON file
-    function importData(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        try {
-          const importedTasks = JSON.parse(event.target.result);
-          if (Array.isArray(importedTasks)) {
-            tasks = importedTasks;
-            saveTasks();
-            render();
-            alert('Tasks imported successfully!');
-          } else {
-            alert('Invalid JSON structure.');
-          }
-        } catch (err) {
-          alert('Error parsing JSON file.');
+        function closeModal() {
+            successModal.classList.add('opacity-0');
+            modalBox.classList.remove('scale-100');
+            modalBox.classList.add('scale-95');
+            setTimeout(() => {
+                successModal.classList.add('hidden');
+            }, 300);
         }
-      };
-      reader.readAsText(file);
-    }
 
-    // Clear Completed Tasks
-    function clearCompleted() {
-      const completedCount = tasks.filter(t => t.completed).length;
-      if (completedCount === 0) {
-        alert('No completed tasks to clear.');
-        return;
-      }
-      if (confirm(`Are you sure you want to remove ${completedCount} completed task(s)?`)) {
-        tasks = tasks.filter(t => !t.completed);
-        saveTasks();
-        render();
-      }
-    }
+        if (trialForm) {
+            trialForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                openModal();
+                trialForm.reset();
+            });
+        }
 
-    // Clear All Tasks
-    function clearAll() {
-      if (tasks.length === 0) return;
-      if (confirm('Are you sure you want to reset and delete ALL tasks? This action cannot be undone.')) {
-        tasks = [];
-        saveTasks();
-        render();
-      }
-    }
+        if (heroQuickForm) {
+            heroQuickForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                openModal();
+                heroQuickForm.reset();
+            });
+        }
 
-    // Utility: HTML Escaper
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, function(m) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[m];
-      });
-    }
-
-    // Utility: Format Time
-    function formatTime(timestamp) {
-      if (!timestamp) return '';
-      const date = new Date(timestamp);
-      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-    }
-
-    // Initialize on DOM Ready
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+        closeModalBtn.addEventListener('click', closeModal);
+        successModal.addEventListener('click', (e) => {
+            if (e.target === successModal) closeModal();
+        });
+    </script>
 </body>
 </html>

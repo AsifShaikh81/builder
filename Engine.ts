@@ -1,7 +1,20 @@
-import { planner } from "./lib/agents/planner";
-import { builder } from "./lib/agents/builder";
+import { graph } from "./lib/graph";
 
-const plan = await planner("build a to do app")
-const build = await  builder(plan)
+const idea = process.argv[2] ?? prompt("what's on your mind?")
 
-await Bun.write("output.html", build)
+if(!idea){
+  console.log("no idead, closing...")
+  process.exit(1)
+}
+
+console.log('Idea: ', idea)
+
+const result = await graph.invoke({idea})
+
+await Bun.write("output.html",result.html)
+
+console.log("DONE!");
+console.log("Approved:", result.approved);
+console.log("Total builds:", result.builds);
+console.log("Issues left:", result.issues);
+console.log("output.html created, `run this command: start output.html`");
